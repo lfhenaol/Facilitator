@@ -14,13 +14,13 @@ use App\Http\Controllers\Controller;
 class ResponseController extends Controller
 {
     /**
-     * @var array
+     * @var
      */
-    private $trainingResponse = [];
+    private $trainingResponse;
     /**
-     * @var array
+     * @var
      */
-    private $verificationResponse = [];
+    private $verificationResponse;
 
     /**
      * ResponseController constructor.
@@ -34,14 +34,14 @@ class ResponseController extends Controller
      * @param TrainingResponseController $trainingResponse
      */
     public function addTrainingResponse(TrainingResponseController $trainingResponse){
-        $this->trainingResponse[] = $trainingResponse;
+        $this->trainingResponse = $trainingResponse;
     }
 
     /**
      * @param VerificationResponseController $verificationResponse
      */
     public function addVerificationResponse(VerificationResponseController $verificationResponse){
-        $this->verificationResponse[] = $verificationResponse;
+        $this->verificationResponse = $verificationResponse;
     }
 
     /**
@@ -52,7 +52,7 @@ class ResponseController extends Controller
     }
 
     /**
-     * @return array
+     * @return TrainingResponseController
      */
     public function getTrainingResponse()
     {
@@ -68,7 +68,7 @@ class ResponseController extends Controller
     }
 
     /**
-     * @return array
+     * @return
      */
     public function getVerificationResponse()
     {

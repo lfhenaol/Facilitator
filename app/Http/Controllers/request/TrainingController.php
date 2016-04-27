@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\request;
 
+use App\Http\Controllers\response\FacilitatorIdController;
+use App\Http\Controllers\response\ImageResultController;
+use App\Http\Controllers\response\TrainingResponseController;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -18,6 +21,7 @@ class TrainingController extends Controller
      * @var array
      */
     private $imageSet = []; //Collection of images
+    private $trainingResponse;
 
     //
 
@@ -25,13 +29,16 @@ class TrainingController extends Controller
      * TrainingController constructor.
      * @param $userId
      * @param $images
+     * @param TrainingResponseController $response
      * @internal param $image
      */
-    public function __construct($userId, $images)
+    public function __construct($userId, $images, TrainingResponseController $response)
     {
-        
+        $response->addFacilitatorId(new FacilitatorIdController());
+        $response->setUserId($userId);
+        $this->trainingResponse = $response;
         foreach ($images as $internalId => $image) {
-            $this->addImage(new ImageController($userId, $image));
+            $this->addImage(new ImageController($userId, $image, new ImageResultController()));
         }
     }
 
@@ -49,11 +56,19 @@ class TrainingController extends Controller
     }
 
     /**
-     * @return array
+     * @return ImageController
      */
     public function getImageSet()
     {
         return $this->imageSet;
     }
-    
+
+    /**
+     * @return TrainingResponseController
+     */
+
+    public function getTrainingResponse()
+    {
+        return $this->trainingResponse;
+    }
 }

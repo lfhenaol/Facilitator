@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\request;
 
+use App\Http\Controllers\response\FacilitatorIdController;
+use App\Http\Controllers\response\ImageResultController;
+use App\Http\Controllers\response\TrainingResponseController;
+use App\Http\Controllers\response\ResponseController;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 #use App\Http\Controllers\Controller;
 
-use App\Http\Controllers\FaceppController;
+use App\Http\Controllers\faceppSDK\FaceppController;
 
 /**
  * Class ImageController
@@ -25,31 +29,32 @@ class ImageController extends FaceppController
     private $face;
     private $userId;
 
+    private $response;
 
     /**
      * ImageController constructor.
      * @param $userID
      * @param $image
+     * @param ImageResultController $response
      */
-    public function __construct($userID, $image)
+    public function __construct($userID, $image, ImageResultController $response)
     {
         $this->userId = $userID;
         $this->face = $image;
-
+        $this->response = $response;
     }
 
     /**
      * Create a repository of faces
      *
      * @return bool
-     * @throws \App\Http\Controllers\Exception
      */
     public function create(){
         $params['person_name'] = $this->userId;
 
-        $response = $this->execute('/person/create', $params);
+        $result = $this->execute('/person/create', $params);
 
-        if ($response['http_code'] == 200)
+        if ($result['http_code'] == 200)
         {
             return true;
         }
@@ -57,39 +62,49 @@ class ImageController extends FaceppController
         return false;
     }
 
+    public function getResponse(){
+        return $this->response;
+    }
+
     /**
      * Determines the image given or not a face
      *
      * @return bool
-     * @throws \App\Http\Controllers\Exception
      */
+
     public function detect(){
 
         // Pasar de base64 a archivo físico
         $params['url'] = $this->face;
 
-        $response = $this->execute('/detection/detect', $params);
+        $result = $this->execute('/detection/detect', $params);
 
 
-        if ($response['http_code'] == 200) {
-            $response = json_decode($response["body"],true);
+        if ($result['http_code'] == 200) {
+            $result = json_decode($result["body"],true);
 
 
             //Is checked if more than one face in the picture, if there is a single face or no face.
-            if (count($response['face']) > 2)
+            if (count($result['face']) > 2)
             {
                 #$response['message'] = "More than one face in the image";
 
                 return false;
             }
-            else if(count($response['face']) == 1)
+            else if(count($result['face']) == 1)
             {
 
-                $this->internalID = $response["face"][0]["face_id"];
+                $this->internalID = $result["face"][0]["face_id"];
+
+                $this->response->setInternalId($this->internalID);
+                $this->response->setSuccess("true");
+                $this->response->setAppCode("200");
+                $this->response->setMessage("OK");
+
                 return true;
             }
         } else {
-            $response['message'] = "Error";
+            $result['message'] = "Error";
         }
         return false;
     }
@@ -98,15 +113,14 @@ class ImageController extends FaceppController
      * Add detected faces faces repository created
      *
      * @return bool
-     * @throws \App\Http\Controllers\Exception
      */
     public function add(){
         $params["face_id"] = $this->internalID;
         $params["person_name"] = $this->userId;
 
-        $response = $this->execute("/person/add_face", $params);
+        $result = $this->execute("/person/add_face", $params);
 
-        if ($response['http_code'] == 200) {
+        if ($result['http_code'] == 200) {
             return true;
         }
         return false;
@@ -116,14 +130,13 @@ class ImageController extends FaceppController
      * Train the repository created in the system face
      *
      * @return bool
-     * @throws \App\Http\Controllers\Exception
      */
     public function train(){
         $params["person_name"] = $this->userId;
 
-        $response = $this->execute("/train/verify",$params);
+        $result = $this->execute("/train/verify",$params);
 
-        if ($response['http_code'] == 200) {
+        if ($result['http_code'] == 200) {
             return true;
         }
         return false;
@@ -133,16 +146,15 @@ class ImageController extends FaceppController
      * Check if the given image of a face is a series of faces and previously trained in face ++
      *
      * @return bool
-     * @throws \App\Http\Controllers\Exception
      */
     public function verify(){
         $params["person_name"] = $this->userId;
         $params["face_id"] = $this->internalID;
 
-        $response = $this->execute("/recognition/verify",$params);
+        $result = $this->execute("/recognition/verify",$params);
 
-        if ($response['http_code'] == 200) {
-            $response = json_decode($response["body"],true);
+        if ($result['http_code'] == 200) {
+            $result = json_decode($result["body"],true);
 
             return true;
         }

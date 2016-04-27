@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\request;
 
+use App\Http\Controllers\response\ImageResultController;
+use App\Http\Controllers\response\VerificationResponseController;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -19,15 +21,18 @@ class VerificationController extends Controller
      * @var
      */
     private $image;
+    private $verificationResponse;
 
     /**
      * VerificationController constructor.
      * @param $userId
      * @param $image
+     * @param VerificationResponseController $verificationResponse
      */
-    public function __construct($userId, $image)
+    public function __construct($userId, $image, VerificationResponseController $verificationResponse)
     {
-        $this->setImage(new ImageController($userId,$image));
+        $this->verificationResponse = $verificationResponse;
+        $this->setImage(new ImageController($userId,$image, new ImageResultController()));
     }
 
     /**
@@ -36,6 +41,10 @@ class VerificationController extends Controller
     public function getImage()
     {
         return $this->image;
+    }
+
+    public function getVerificationResponse(){
+        
     }
 
     /**

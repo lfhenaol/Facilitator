@@ -32,10 +32,17 @@ class ImageResultController extends Controller
 
     /**
      * ImageResultController constructor.
+     * @param $internalId
+     * @param $success
+     * @param $appCode
+     * @param $message
      */
-    public function __construct()
+    public function __construct($internalId="",$success="", $appCode="", $message="")
     {
-
+        $this->internalId = $internalId;
+        $this->success = $success;
+        $this->appCode = $appCode;
+        $this->message = $message;
     }
 
     /**

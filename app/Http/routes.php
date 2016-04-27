@@ -15,6 +15,4 @@
 ##    return view('welcome');
 ##});
 
-Route::match(['get','post'],'request/{train}','request\RequestController@receive');
-
-#Route::match(['get','post'],'request/{verify}','request\RequestController@receive');
+Route::match(['get','post'],'request/{train}','Facilitator@Facilitator');

@@ -21,10 +21,7 @@ class TrainingResponseController extends Controller
      * @var
      */
     private $success;
-    /**
-     * @var array
-     */
-    private $imageResult = [];
+
     /**
      * @var array
      */
@@ -37,13 +34,7 @@ class TrainingResponseController extends Controller
     {
 
     }
-
-    /**
-     * @param ImageResultController $imageResult
-     */
-    public function addImageResult(ImageResultController $imageResult){
-        $this->imageResult[] = $imageResult;
-    }
+    
 
     /**
      * @param FacilitatorIdController $facilitatorId
@@ -85,7 +76,7 @@ class TrainingResponseController extends Controller
     }
 
     /**
-     * @return array
+     * @return ImageResultController
      */
     public function getImageResult()
     {

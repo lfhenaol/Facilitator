@@ -24,9 +24,13 @@ class FacilitatorIdController extends Controller
 
     /**
      * FacilitatorIdController constructor.
+     * @param $facId
+     * @param $facType
      */
-    public function __construct()
+    public function __construct($facId = "696c3ecd355c03bf86ad029a68b931cd", $facType = "Facepp")
     {
+        $this->facId = $facId;
+        $this->facType = $facType;
 
     }
 
