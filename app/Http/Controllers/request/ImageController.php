@@ -5,12 +5,14 @@ namespace App\Http\Controllers\request;
 use App\Http\Controllers\response\FacilitatorIdController;
 use App\Http\Controllers\response\ImageResultController;
 use App\Http\Controllers\response\TrainingResponseController;
+use App\Library\ImagesFunction;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 #use App\Http\Controllers\Controller;
 
 use App\Http\Controllers\faceppSDK\FaceppController;
+use Illuminate\Support\Facades\URL;
 
 /**
  * Class ImageController
@@ -26,6 +28,10 @@ class ImageController extends FaceppController
      * @var
      */
     private $face;
+    /**
+     * @var
+     */
+    private $face_id;
     /**
      * @var
      */
@@ -89,19 +95,20 @@ class ImageController extends FaceppController
 
     public function detect(){
 
-        // Pasar de base64 a archivo físico
-        $params['url'] = $this->face;
+        $imageFunction = new ImagesFunction();
+        $imageFunction->imageBase64 = $this->face;
+        $params['img'] = $imageFunction->createImage($this->internalID);
 
         $results = $this->execute('/detection/detect', $params);
 
         $result = json_decode($results["body"],true);
-        
-        if ($results['http_code'] == 200) {
 
+        if ($results['http_code'] == 200) {
+            $this->response->setInternalID($this->internalID);
             //Is checked if more than one face in the picture, if there is a single face or no face.
             if (count($result['face']) > 2)
             {
-                $this->response->setInternalID("");
+
                 $this->response->setSuccess("false");
                 $this->response->setAppCode("102");
                 $this->response->setMessage("MORE_THAN_A_FACE_IN_THE_IMAGE");
@@ -110,20 +117,17 @@ class ImageController extends FaceppController
             }
             else if(count($result['face']) == 1)
             {
-                $this->internalID = $result["face"][0]["face_id"];
-
-                $this->response->setInternalId($this->internalID);
+                $this->face_id = $result["face"][0]["face_id"];
 
                 return true;
             } else{
-                $this->response->setInternalId("");
+                $this->response->setInternalId($this->internalID);
                 $this->response->setSuccess("false");
                 $this->response->setAppCode("103");
                 $this->response->setMessage("THERE_IS_NO_FACE_IN_THE_IMAGE");
             }
         } else {
 
-            $this->response->setInternalId("");
             $this->response->setSuccess("false");
             $this->response->setAppCode($result["error_code"]);
             $this->response->setMessage($result["error"]);
@@ -137,7 +141,7 @@ class ImageController extends FaceppController
      * @return bool
      */
     public function add(){
-        $params["face_id"] = $this->internalID;
+        $params["face_id"] = $this->face_id;
         $params["person_name"] = $this->userId;
 
         $result = $this->execute("/person/add_face", $params);
@@ -146,7 +150,7 @@ class ImageController extends FaceppController
             return true;
         }else{
             $result = json_decode($result["body"],true);
-            $this->response->setInternalId("");
+            $this->response->setInternalID($this->internalID);
             $this->response->setSuccess("false");
             $this->response->setAppCode($result["error_code"]);
             $this->response->setMessage($result["error"]);
@@ -173,7 +177,7 @@ class ImageController extends FaceppController
             return true;
         } else{
             $result = json_decode($result["body"],true);
-            $this->response->setInternalId("");
+            $this->response->setInternalID($this->internalID);
             $this->response->setSuccess("false");
             $this->response->setAppCode($result["error_code"]);
             $this->response->setMessage($result["error"]);
@@ -188,7 +192,7 @@ class ImageController extends FaceppController
      */
     public function verify(){
         $params["person_name"] = $this->userId;
-        $params["face_id"] = $this->internalID;
+        $params["face_id"] = $this->face_id;
 
         $result = $this->execute("/recognition/verify",$params);
 

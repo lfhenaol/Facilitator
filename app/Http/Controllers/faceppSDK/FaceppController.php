@@ -4,6 +4,7 @@ namespace App\Http\Controllers\faceppSDK;
 
 
 use App\Http\Controllers\Controller;
+use CURLFile;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -86,7 +87,7 @@ class FaceppController extends Controller
         curl_setopt($curl_handle, CURLOPT_POST, true);
 
         if (array_key_exists('img', $request_body)) {
-            $request_body['img'] = '@' . $request_body['img'];
+            $request_body['img'] = new CurlFile($request_body['img'], 'image/jpeg');
         } else {
             $request_body = http_build_query($request_body);
         }

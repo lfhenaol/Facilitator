@@ -67,17 +67,14 @@ class ServiceInterface extends Controller
         {
             $request = $request->json()->all();
            
-            $this->addTraining(new TrainingController($request["UserId"], $request["images"], new TrainingResponseController()));
+            $this->addTraining(new TrainingController($request["UserId"], $request["Images"], new TrainingResponseController()));
 
         }
         else if (strtolower($requestType) == "verify")
         {
             $request = $request->json()->all();
 
-            foreach ($request["image"] as $array => $image) {
-                $this->addVerification(new VerificationController($request["UserId"], $image, new VerificationResponseController()));
-
-            }
+            $this->addVerification(new VerificationController($request["UserId"], $request["Image"], new VerificationResponseController()));
         }
 
         return true;

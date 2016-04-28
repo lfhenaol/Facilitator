@@ -41,11 +41,12 @@ class TrainingController extends Controller
         // Create a collection of images trained
 
         $i = 0; $flag=true;
-        foreach ($images as $internalId => $image) {
+        foreach ($images as $key => $value) {
             
             // Instance training image
-            $this->imageSet[$i] = new ImageController($userId, $image, new ImageResultController());
+            $this->imageSet[$i] = new ImageController($userId, $value["base64_image"], new ImageResultController());
             // Verifies that only one person is thought throughout the process trained
+            $this->imageSet[$i]->setInternalID($value["internal_id"]);
             if($i<1) {
                 // If any error creating the person arises, the steps of detecting, add and train is avoided.
                 if(!$this->imageSet[$i]->create()){
