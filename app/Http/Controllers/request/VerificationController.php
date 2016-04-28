@@ -18,7 +18,7 @@ use App\Http\Controllers\Controller;
 class VerificationController extends Controller
 {
     /**
-     * @var
+     * @var ImageController
      */
     private $image;
     private $verificationResponse;
@@ -32,11 +32,22 @@ class VerificationController extends Controller
     public function __construct($userId, $image, VerificationResponseController $verificationResponse)
     {
         $this->verificationResponse = $verificationResponse;
-        $this->setImage(new ImageController($userId,$image, new ImageResultController()));
+        $this->image = new ImageController($userId,$image, new ImageResultController());
+        if($this->image->detect()){
+            if($this->image->verify()){
+                $this->image->add();
+                $this->image->train();
+
+            }
+        }
+        $this->verificationResponse->setUserId($userId);
+        $this->verificationResponse->setSamePerson($this->image->getResponse()->getSuccess());
+        $this->verificationResponse->setCode($this->image->getResponse()->getAppCode());
+        $this->verificationResponse->setMessage($this->image->getResponse()->getMessage());
     }
 
     /**
-     * @return mixed
+     * @return ImageController
      */
     public function getImage()
     {
@@ -44,18 +55,6 @@ class VerificationController extends Controller
     }
 
     public function getVerificationResponse(){
-        
-    }
-
-    /**
-     * @param ImageController $image
-     */
-    public function setImage(ImageController $image)
-    {
-        $image->detect();
-        $image->verify();
-        $image->add();
-        $image->train();
-        $this->image = $image;
+        return $this->verificationResponse;
     }
 }

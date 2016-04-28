@@ -5,7 +5,6 @@ namespace App\Http\Controllers\request;
 use App\Http\Controllers\response\FacilitatorIdController;
 use App\Http\Controllers\response\ImageResultController;
 use App\Http\Controllers\response\TrainingResponseController;
-use App\Http\Controllers\response\ResponseController;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -54,9 +53,16 @@ class ImageController extends FaceppController
 
         $result = $this->execute('/person/create', $params);
 
-        if ($result['http_code'] == 200)
+        // Verify that the procedure will be successful or that the person already exists
+        if ($result['http_code'] == 200 || $result['http_code'] == 453)
         {
             return true;
+        }else{
+            $result = json_decode($result["body"],true);
+            $this->response->setInternalId("");
+            $this->response->setSuccess("false");
+            $this->response->setAppCode($result["error_code"]);
+            $this->response->setMessage($result["error"]);
         }
 
         return false;
@@ -77,34 +83,41 @@ class ImageController extends FaceppController
         // Pasar de base64 a archivo físico
         $params['url'] = $this->face;
 
-        $result = $this->execute('/detection/detect', $params);
+        $results = $this->execute('/detection/detect', $params);
 
-
-        if ($result['http_code'] == 200) {
-            $result = json_decode($result["body"],true);
-
+        $result = json_decode($results["body"],true);
+        var_dump($results['http_code']);
+        if ($results['http_code'] == 200) {
 
             //Is checked if more than one face in the picture, if there is a single face or no face.
             if (count($result['face']) > 2)
             {
-                #$response['message'] = "More than one face in the image";
+                $this->response->setInternalID("");
+                $this->response->setSuccess("false");
+                $this->response->setAppCode("102");
+                $this->response->setMessage("MORE_THAN_A_FACE_IN_THE_IMAGE");
 
                 return false;
             }
             else if(count($result['face']) == 1)
             {
-
                 $this->internalID = $result["face"][0]["face_id"];
 
                 $this->response->setInternalId($this->internalID);
-                $this->response->setSuccess("true");
-                $this->response->setAppCode("200");
-                $this->response->setMessage("OK");
 
                 return true;
+            } else{
+                $this->response->setInternalId("");
+                $this->response->setSuccess("false");
+                $this->response->setAppCode("103");
+                $this->response->setMessage("THERE_IS_NO_FACE_IN_THE_IMAGE");
             }
         } else {
-            $result['message'] = "Error";
+
+            $this->response->setInternalId("");
+            $this->response->setSuccess("false");
+            $this->response->setAppCode($result["error_code"]);
+            $this->response->setMessage($result["error"]);
         }
         return false;
     }
@@ -122,6 +135,12 @@ class ImageController extends FaceppController
 
         if ($result['http_code'] == 200) {
             return true;
+        }else{
+            $result = json_decode($result["body"],true);
+            $this->response->setInternalId("");
+            $this->response->setSuccess("false");
+            $this->response->setAppCode($result["error_code"]);
+            $this->response->setMessage($result["error"]);
         }
         return false;
     }
@@ -137,7 +156,18 @@ class ImageController extends FaceppController
         $result = $this->execute("/train/verify",$params);
 
         if ($result['http_code'] == 200) {
+
+            $this->response->setSuccess("true");
+            $this->response->setAppCode("200");
+            $this->response->setMessage("OK");
+
             return true;
+        } else{
+            $result = json_decode($result["body"],true);
+            $this->response->setInternalId("");
+            $this->response->setSuccess("false");
+            $this->response->setAppCode($result["error_code"]);
+            $this->response->setMessage($result["error"]);
         }
         return false;
     }
@@ -156,7 +186,25 @@ class ImageController extends FaceppController
         if ($result['http_code'] == 200) {
             $result = json_decode($result["body"],true);
 
-            return true;
+            $this->response->setSuccess($result["is_same_person"]);
+
+            if($result["is_same_person"]) {
+                $this->response->setAppCode("200");
+                $this->response->setMessage("OK");
+                return true;
+            } else{
+
+                $this->response->setAppCode("104");
+                $this->response->setMessage("IT_IS_NOT_THE_SAME_PERSON");
+                return false;
+            }
+
+        } else{
+            $result = json_decode($result["body"],true);
+            $this->response->setInternalId("");
+            $this->response->setSuccess("false");
+            $this->response->setAppCode($result["error_code"]);
+            $this->response->setMessage($result["error"]);
         }
         return false;
     }

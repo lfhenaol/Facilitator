@@ -37,23 +37,31 @@ class TrainingController extends Controller
         $response->addFacilitatorId(new FacilitatorIdController());
         $response->setUserId($userId);
         $this->trainingResponse = $response;
+
+        // Create a collection of images trained
+
+        $i = 0; $flag=true;
         foreach ($images as $internalId => $image) {
-            $this->addImage(new ImageController($userId, $image, new ImageResultController()));
+            
+            // Instance training image
+            $this->imageSet[$i] = new ImageController($userId, $image, new ImageResultController());
+            // Verifies that only one person is thought throughout the process trained
+            if($i<1) {
+                // If any error creating the person arises, the steps of detecting, add and train is avoided.
+                if(!$this->imageSet[$i]->create()){
+                    $flag = false;
+                }
+            }
+            if($flag) {
+                $this->imageSet[$i]->detect();
+                $this->imageSet[$i]->add();
+                $this->imageSet[$i]->train();
+            }
+            $i++;
         }
     }
 
     //Composition with Image in Class Diagram
-    /**
-     * @param ImageController $image
-     */
-    public function addImage(ImageController $image)
-    {
-        $image->create();
-        $image->detect();
-        $image->add();
-        $image->train();
-        $this->imageSet[] = $image;
-    }
 
     /**
      * @return ImageController

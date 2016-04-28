@@ -17,6 +17,6 @@ class Facilitator extends Controller
     {
         $this->serviceInterface = new ServiceInterface();
         $this->serviceInterface->request($request, $requestType);
-        $this->serviceInterface->response($requestType);
+        return $this->serviceInterface->response($requestType);
     }
 }

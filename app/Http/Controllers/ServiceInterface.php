@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\request\TrainingController;
 use App\Http\Controllers\request\VerificationController;
-use App\Http\Controllers\response\ResponseController;
 use App\Http\Controllers\response\TrainingResponseController;
 use App\Http\Controllers\response\VerificationResponseController;
 use Illuminate\Http\Request;
@@ -24,6 +23,8 @@ class ServiceInterface extends Controller
      * Collection of verifications
      */
     private $verification;
+
+
 
     //public function test(Request $request){
     //    if(!is_null($request["id"])){
@@ -64,15 +65,17 @@ class ServiceInterface extends Controller
         if(strtolower($requestType) == "train")
         {
             $request = $request->json()->all();
+           
             $this->addTraining(new TrainingController($request["UserId"], $request["images"], new TrainingResponseController()));
-            #var_dump($this->getTraining()->getImageSet());
+
         }
         else if (strtolower($requestType) == "verify")
         {
             $request = $request->json()->all();
-            var_dump($request);
+
             foreach ($request["image"] as $array => $image) {
                 $this->addVerification(new VerificationController($request["UserId"], $image, new VerificationResponseController()));
+
             }
         }
 
@@ -81,18 +84,20 @@ class ServiceInterface extends Controller
 
     /**
      * @param $respondType
-     * @return ResponseController
+     * @return ""
      */
     public function response($respondType)
     {
         if(strtolower($respondType) == "train")
         {
-            return var_dump($this->getTraining()->getImageSet()[0]);
+            return var_dump(count($this->getTraining()->getImageSet()));
         }
         else if (strtolower($respondType) == "verify") {
+            return response()->json(["UserId" => $this->getVerification()->getVerificationResponse()->getUserId(),
+                                    "isSamePerson"=>$this->getVerification()->getVerificationResponse()->getSamePerson(),
+                                    "codeError"=>["code"=>$this->getVerification()->getVerificationResponse()->getCode(),
+                                                    "message"=>$this->getVerification()->getVerificationResponse()->getMessage()]]);
         }
-
-        return "";
     }
 
     /**
@@ -109,5 +114,21 @@ class ServiceInterface extends Controller
     public function setTraining($training)
     {
         $this->training = $training;
+    }
+
+    /**
+     * @return  VerificationController
+     */
+    public function getVerification()
+    {
+        return $this->verification;
+    }
+
+    /**
+     * @param array $verification
+     */
+    public function setVerification($verification)
+    {
+        $this->verification = $verification;
     }
 }
