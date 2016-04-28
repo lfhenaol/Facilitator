@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Auth\Access\Response;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
+/**
+ * Class Facilitator
+ * @package App\Http\Controllers
+ */
 class Facilitator extends Controller
 {
     /**
@@ -13,6 +18,14 @@ class Facilitator extends Controller
      */
     public $serviceInterface;
 
+    /**
+     *  The facilitator is responsible for receiving requests that require training images for later
+     *  recognition, besides this responds to such requests, depending on whether training or verification.
+     *
+     * @param Request $request
+     * @param $requestType
+     * @return Response
+     */
     public function Facilitator(Request $request, $requestType)
     {
         if($request->method() == "POST") {

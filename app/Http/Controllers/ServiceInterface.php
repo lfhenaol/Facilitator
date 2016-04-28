@@ -11,20 +11,24 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
+/**
+ * Class ServiceInterface
+ * @package App\Http\Controllers
+ */
 class ServiceInterface extends Controller
 {
     /**
      * @var array
-     * Collection of trainings
+     * Trainings
      */
     private $training;
 
     /**
      * @var array
-     * Collection of verifications
+     * Verifications
      */
     private $verification;
-    
+
 
     /**
      * RequestController constructor.
@@ -48,6 +52,8 @@ class ServiceInterface extends Controller
     }
 
     /**
+     * Request for either training or verification
+     *
      * @param Request $request
      * @param $requestType
      * @return Request
@@ -71,15 +77,18 @@ class ServiceInterface extends Controller
         return true;
     }
 
+
     /**
+     *  Response after conducting training or verification
+     *
      * @param $respondType
-     * @return ""
+     * @return mixed
      */
     public function response($respondType)
     {
+        // Development of JSON to respond to the result of training or verification
         if(strtolower($respondType) == "train")
         {
-
             $imagesResult = array();
             $success = true;
             foreach($this->getTraining()->getImageSet() as $value => $item){
@@ -96,6 +105,7 @@ class ServiceInterface extends Controller
                 "Images"=>$imagesResult,"FacilitatorIds"=>["FacId"=>$this->getTraining()->getTrainingResponse()->getFacilitatorId()->getFacId(),
                                                             "FacType"=>$this->getTraining()->getTrainingResponse()->getFacilitatorId()->getFacType()]
             ];
+            // The results are returned in JSON format
             return response()->json($json);
         }
         else if (strtolower($respondType) == "verify") {

@@ -21,6 +21,9 @@ class TrainingController extends Controller
      * @var array
      */
     private $imageSet = []; //Collection of images
+    /**
+     * @var TrainingResponseController
+     */
     private $trainingResponse;
 
     //

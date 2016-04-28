@@ -29,13 +29,28 @@ class FaceppController extends Controller
     ######################################################
     #public $server          = 'http://apicn.faceplusplus.com/v2';
     #public $server         = 'https://apicn.faceplusplus.com/v2';
+    /**
+     * @var string
+     */
     public $server = "http://apius.faceplusplus.com/v2";
     #public $server         = 'https://apius.faceplusplus.com/v2';
 
+    /**
+     * @var string
+     */
     public $api_key = "d68142c13b8cc10c00eca8f9812bee87";           // set your API KEY or set the key static in the property
+    /**
+     * @var string
+     */
     public $api_secret = "6wXFVq-Mv3CvM5POi6jbFR7RiH3lyFZX";        // set your API SECRET or set the secret static in the property
+    /**
+     * @var string
+     */
     private $useragent="Faceplusplus PHP SDK/1.1";
 
+    /**
+     * FaceppController constructor.
+     */
     function __construct()
     {
 
@@ -59,6 +74,11 @@ class FaceppController extends Controller
         return $this->request("{$this->server}{$method}", $params);
     }
 
+    /**
+     * @param $request_url
+     * @param $request_body
+     * @return array
+     */
     private function request($request_url, $request_body)
     {
         $curl_handle = curl_init();
@@ -105,6 +125,9 @@ class FaceppController extends Controller
         );
     }
 
+    /**
+     * @return bool
+     */
     private function apiPropertiesAreSet()
     {
         if( ! $this->api_key) {
