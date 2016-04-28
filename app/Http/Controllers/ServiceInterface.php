@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\request\TrainingController;
 use App\Http\Controllers\request\VerificationController;
+use App\Http\Controllers\response\FacilitatorIdController;
 use App\Http\Controllers\response\TrainingResponseController;
 use App\Http\Controllers\response\VerificationResponseController;
 use Illuminate\Http\Request;
@@ -90,7 +91,24 @@ class ServiceInterface extends Controller
     {
         if(strtolower($respondType) == "train")
         {
-            return var_dump(count($this->getTraining()->getImageSet()));
+
+            $imagesResult = array();
+            $success = true;
+            foreach($this->getTraining()->getImageSet() as $value => $item){
+                array_push($imagesResult,["internal_id"=>$item->getResponse()->getInternalID(),
+                            "isSuccess"=>$item->getResponse()->getSuccess(),
+                            "appCode"=>$item->getResponse()->getAppCode(),
+                            "message"=>$item->getResponse()->getMessage()]);
+                if($item->getResponse()->getSuccess() == "false"){
+                    var_dump($item->getResponse()->getSuccess());
+                    $success = false;
+                }
+            }
+            $json =["UserId"=>$this->getTraining()->getTrainingResponse()->getUserId(),"Success"=>$success,
+                "Images"=>$imagesResult,"FacilitatorIds"=>["FacId"=>$this->getTraining()->getTrainingResponse()->getFacilitatorId()->getFacId(),
+                                                            "FacType"=>$this->getTraining()->getTrainingResponse()->getFacilitatorId()->getFacType()]
+            ];
+            return response()->json($json);
         }
         else if (strtolower($respondType) == "verify") {
             return response()->json(["UserId" => $this->getVerification()->getVerificationResponse()->getUserId(),

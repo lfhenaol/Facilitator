@@ -26,8 +26,14 @@ class ImageController extends FaceppController
      * @var
      */
     private $face;
+    /**
+     * @var
+     */
     private $userId;
 
+    /**
+     * @var ImageResultController
+     */
     private $response;
 
     /**
@@ -68,6 +74,9 @@ class ImageController extends FaceppController
         return false;
     }
 
+    /**
+     * @return ImageResultController
+     */
     public function getResponse(){
         return $this->response;
     }
@@ -86,7 +95,7 @@ class ImageController extends FaceppController
         $results = $this->execute('/detection/detect', $params);
 
         $result = json_decode($results["body"],true);
-        var_dump($results['http_code']);
+        
         if ($results['http_code'] == 200) {
 
             //Is checked if more than one face in the picture, if there is a single face or no face.
