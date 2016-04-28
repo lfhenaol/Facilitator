@@ -24,16 +24,7 @@ class ServiceInterface extends Controller
      * Collection of verifications
      */
     private $verification;
-
-
-
-    //public function test(Request $request){
-    //    if(!is_null($request["id"])){
-    //        return $request["id"];
-    //    }
-
-    //   return "sd";
-    //}
+    
 
     /**
      * RequestController constructor.
