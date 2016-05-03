@@ -94,7 +94,7 @@ class FaceppController extends Controller
         curl_setopt($curl_handle, CURLOPT_HEADER, false);
         curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl_handle, CURLOPT_TIMEOUT, 5184000);
-        curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 120);
+        curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 1200);
         curl_setopt($curl_handle, CURLOPT_NOSIGNAL, true);
         curl_setopt($curl_handle, CURLOPT_REFERER, $request_url);
         curl_setopt($curl_handle, CURLOPT_USERAGENT, $this->useragent);
