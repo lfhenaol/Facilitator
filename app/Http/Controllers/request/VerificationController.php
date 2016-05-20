@@ -34,15 +34,14 @@ class VerificationController extends Controller
         $this->image = new ImageController($userId,$image, new ImageResultController());
         if($this->image->detect()){
             if($this->image->verify()){
-                $this->image->add();
-                $this->image->train();
-
+                if($this->image->add()) {
+                    $this->image->train();
+                }
             }
         }
-        $this->verificationResponse->setUserId($userId);
-        $this->verificationResponse->setSamePerson($this->image->getResponse()->getSuccess());
-        $this->verificationResponse->setCode($this->image->getResponse()->getAppCode());
-        $this->verificationResponse->setMessage($this->image->getResponse()->getMessage());
+        $this->verificationResponse->setSuccess($this->image->getResponse()->getSuccess());
+        $this->verificationResponse->setErrorCode($this->image->getResponse()->getErrorCode());
+        $this->verificationResponse->setErrorMessage($this->image->getResponse()->getErrorMessage());
     }
 
     /**

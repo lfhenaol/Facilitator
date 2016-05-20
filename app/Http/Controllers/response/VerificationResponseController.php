@@ -13,25 +13,21 @@ use App\Http\Controllers\Controller;
  */
 class VerificationResponseController extends Controller
 {
-    /**
-     * @var
-     */
-    private $userId;
 
     /**
      * @var
      */
-    private $samePerson;
+    private $success;
 
     /**
      * @var
      */
-    private $code;
+    private $errorCode;
 
     /**
      * @var
      */
-    private $message;
+    private $errorMessage;
 
     /**
      * VerificationResponseController constructor.
@@ -44,65 +40,49 @@ class VerificationResponseController extends Controller
     /**
      * @return mixed
      */
-    public function getUserId()
+    public function getSuccess()
     {
-        return $this->userId;
+        return $this->success;
     }
 
     /**
-     * @param mixed $userId
+     * @param mixed $success
      */
-    public function setUserId($userId)
+    public function setSuccess($success)
     {
-        $this->userId = $userId;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSamePerson()
-    {
-        return $this->samePerson;
-    }
-
-    /**
-     * @param mixed $samePerson
-     */
-    public function setSamePerson($samePerson)
-    {
-        $this->samePerson = $samePerson;
+        $this->success = $success;
     }
 
     /**
      * @return mixed
      */
-    public function getCode()
+    public function getErrorCode()
     {
-        return $this->code;
+        return $this->errorCode;
     }
 
     /**
-     * @param mixed $code
+     * @param mixed $errorCode
      */
-    public function setCode($code)
+    public function setErrorCode($errorCode)
     {
-        $this->code = $code;
+        $this->errorCode = $errorCode;
     }
 
     /**
      * @return mixed
      */
-    public function getMessage()
+    public function getErrorMessage()
     {
-        return $this->message;
+        return $this->errorMessage;
     }
 
     /**
-     * @param mixed $message
+     * @param mixed $errorMessage
      */
-    public function setMessage($message)
+    public function setErrorMessage($errorMessage)
     {
-        $this->message = $message;
+        $this->errorMessage = $errorMessage;
     }
 
 

@@ -15,50 +15,86 @@ class ImageResultController extends Controller
 {
     /**
      * @var
+     * @change private $internalId; for private $pictureId;
      */
-    private $internalId;
+    private $pictureId;
     /**
      * @var
+     *
      */
     private $success;
     /**
      * @var
+     * @change private $appCode; for private $errorCode
      */
-    private $appCode;
+    private $errorCode;
     /**
      * @var
+     * @change private $message; for private $errorMessage;
      */
-    private $message;
+    private $errorMessage;
 
     /**
      * ImageResultController constructor.
-     * @param $internalId
-     * @param $success
-     * @param $appCode
-     * @param $message
+     * @param string $pictureId
+     * @param string $errorCode
+     * @param string $errorMessage
+     * @param string $success
      */
-    public function __construct($internalId="",$success="", $appCode="", $message="")
+    public function __construct($pictureId="", $errorCode="", $errorMessage="", $success="")
     {
-        $this->internalId = $internalId;
+        $this->pictureId = $pictureId;
+        $this->errorCode = $errorCode;
+        $this->errorMessage = $errorMessage;
         $this->success = $success;
-        $this->appCode = $appCode;
-        $this->message = $message;
     }
 
     /**
      * @return mixed
      */
-    public function getInternalId()
+    public function getPictureId()
     {
-        return $this->internalId;
+        return $this->pictureId;
     }
 
     /**
-     * @param mixed $internalId
+     * @param mixed $pictureId
      */
-    public function setInternalId($internalId)
+    public function setPictureId($pictureId)
     {
-        $this->internalId = $internalId;
+        $this->pictureId = $pictureId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getErrorCode()
+    {
+        return $this->errorCode;
+    }
+
+    /**
+     * @param mixed $errorCode
+     */
+    public function setErrorCode($errorCode)
+    {
+        $this->errorCode = $errorCode;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
+    /**
+     * @param mixed $errorMessage
+     */
+    public function setErrorMessage($errorMessage)
+    {
+        $this->errorMessage = $errorMessage;
     }
 
     /**
@@ -68,7 +104,7 @@ class ImageResultController extends Controller
     {
         return $this->success;
     }
-
+    
     /**
      * @param mixed $success
      */
@@ -77,37 +113,6 @@ class ImageResultController extends Controller
         $this->success = $success;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getAppCode()
-    {
-        return $this->appCode;
-    }
-
-    /**
-     * @param mixed $appCode
-     */
-    public function setAppCode($appCode)
-    {
-        $this->appCode = $appCode;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    /**
-     * @param mixed $message
-     */
-    public function setMessage($message)
-    {
-        $this->message = $message;
-    }
 
     
 }

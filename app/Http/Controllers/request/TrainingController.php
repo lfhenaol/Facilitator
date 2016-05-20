@@ -37,7 +37,7 @@ class TrainingController extends Controller
      */
     public function __construct($userId, $images, TrainingResponseController $response)
     {
-        $response->addFacilitatorId(new FacilitatorIdController());
+        $response->addFacilitatorId(new FacilitatorIdController($userId));
         $response->setUserId($userId);
         $this->trainingResponse = $response;
 
@@ -47,9 +47,9 @@ class TrainingController extends Controller
         foreach ($images as $key => $value) {
             
             // Instance training image
-            $this->imageSet[$i] = new ImageController($userId, $value["base64_image"], new ImageResultController());
+            $this->imageSet[$i] = new ImageController($userId,trim($value["base64"]), new ImageResultController());
             // Verifies that only one person is thought throughout the process trained
-            $this->imageSet[$i]->setInternalID($value["internal_id"]);
+            $this->imageSet[$i]->setInternalID($value["pictureId"]);
             if($i<1) {
                 // If any error creating the person arises, the steps of detecting, add and train is avoided.
                 if(!$this->imageSet[$i]->create()){
@@ -57,9 +57,11 @@ class TrainingController extends Controller
                 }
             }
             if($flag) {
-                $this->imageSet[$i]->detect();
-                $this->imageSet[$i]->add();
-                $this->imageSet[$i]->train();
+                if($this->imageSet[$i]->detect()) {
+                    if($this->imageSet[$i]->add()){
+                        $this->imageSet[$i]->train();
+                    }
+                }
             }
             $i++;
         }

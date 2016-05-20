@@ -64,14 +64,16 @@ class ServiceInterface extends Controller
         {
             $request = $request->json()->all();
            
-            $this->addTraining(new TrainingController($request["UserId"], $request["Images"], new TrainingResponseController()));
+            $this->addTraining(new TrainingController(uniqid() /*unique identifier for userId*/, $request["pictures"], new TrainingResponseController()));
 
         }
         else if (strtolower($requestType) == "verify")
         {
             $request = $request->json()->all();
+            $facId = trim($request["facilitatorIds"][0]["facId"]);
+            $picture = trim($request["picture"]);
 
-            $this->addVerification(new VerificationController($request["UserId"], $request["Image"], new VerificationResponseController()));
+            $this->addVerification(new VerificationController($facId,$picture, new VerificationResponseController()));
         }
 
         return true;
@@ -89,30 +91,43 @@ class ServiceInterface extends Controller
         // Development of JSON to respond to the result of training or verification
         if(strtolower($respondType) == "train")
         {
-            $imagesResult = array();
+            $picturesResult = array();
             $success = true;
-            foreach($this->getTraining()->getImageSet() as $value => $item){
-                array_push($imagesResult,["internal_id"=>$item->getResponse()->getInternalID(),
-                            "isSuccess"=>$item->getResponse()->getSuccess(),
-                            "appCode"=>$item->getResponse()->getAppCode(),
-                            "message"=>$item->getResponse()->getMessage()]);
+
+            // The results are returned in JSON format
+
+            foreach ($this->getTraining()->getImageSet() as $value => $item){
+                
                 if($item->getResponse()->getSuccess() == "false"){
-                    var_dump($item->getResponse()->getSuccess());
+                    array_push($picturesResult,["pictureId"=>$item->getResponse()->getPictureId(),
+                    "errorCode"=>$item->getResponse()->getErrorCode(),
+                    "errorMessage"=>$item->getResponse()->getErrorMessage()]);
                     $success = false;
                 }
             }
-            $json =["UserId"=>$this->getTraining()->getTrainingResponse()->getUserId(),"Success"=>$success,
-                "Images"=>$imagesResult,"FacilitatorIds"=>["FacId"=>$this->getTraining()->getTrainingResponse()->getFacilitatorId()->getFacId(),
-                                                            "FacType"=>$this->getTraining()->getTrainingResponse()->getFacilitatorId()->getFacType()]
-            ];
-            // The results are returned in JSON format
+
+            if($success == true){
+                array_push($picturesResult,["facId" => $this->getTraining()->getTrainingResponse()->getFacilitatorId()->getFacId(),
+                    "facType"=>$this->getTraining()->getTrainingResponse()->getFacilitatorId()->getFacType()]);
+            }
+
+            $json =["success"=>$success, (($success)? "facilitatorIds":"errors") => $picturesResult];
+
             return response()->json($json);
         }
         else if (strtolower($respondType) == "verify") {
-            return response()->json(["UserId" => $this->getVerification()->getVerificationResponse()->getUserId(),
-                                    "isSamePerson"=>$this->getVerification()->getVerificationResponse()->getSamePerson(),
-                                    "codeError"=>["code"=>$this->getVerification()->getVerificationResponse()->getCode(),
-                                                    "message"=>$this->getVerification()->getVerificationResponse()->getMessage()]]);
+
+            $success = $this->getVerification()->getVerificationResponse()->getSuccess();
+            $pictureResult = array();
+            $json = ["success"=>$success];
+
+            if($success == "false" || $success == false){
+                array_push($pictureResult,["errorCode"=>$this->getVerification()->getVerificationResponse()->getErrorCode(),
+                "errorMessage"=>$this->getVerification()->getVerificationResponse()->getErrorMessage()]);
+                $json = ["success"=>$success, "errors"=>$pictureResult];
+            }
+
+            return response()->json($json);
         }
     }
 

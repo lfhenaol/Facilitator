@@ -50,7 +50,7 @@ class ImageController extends FaceppController
      */
     public function __construct($userID, $image, ImageResultController $response)
     {
-        $this->userId = $userID;
+        $this->userId = $userID; // It generates a unique identifier representing the user
         $this->face = $image;
         $this->response = $response;
     }
@@ -71,10 +71,10 @@ class ImageController extends FaceppController
             return true;
         }else{
             $result = json_decode($result["body"],true);
-            $this->response->setInternalId("");
+            $this->response->setPictureId("");
             $this->response->setSuccess("false");
-            $this->response->setAppCode($result["error_code"]);
-            $this->response->setMessage($result["error"]);
+            $this->response->setErrorCode($result["error_code"]);
+            $this->response->setErrorMessage($result["error"]);
         }
 
         return false;
@@ -103,15 +103,17 @@ class ImageController extends FaceppController
 
         $result = json_decode($results["body"],true);
 
+        $this->response->setPictureId($this->internalID);
+
         if ($results['http_code'] == 200) {
-            $this->response->setInternalID($this->internalID);
+
             //Is checked if more than one face in the picture, if there is a single face or no face.
             if (count($result['face']) > 2)
             {
 
                 $this->response->setSuccess("false");
-                $this->response->setAppCode("102");
-                $this->response->setMessage("MORE_THAN_A_FACE_IN_THE_IMAGE");
+                $this->response->setErrorCode("13");
+                $this->response->setErrorMessage("More than a face in the image");
 
                 return false;
             }
@@ -121,16 +123,15 @@ class ImageController extends FaceppController
 
                 return true;
             } else{
-                $this->response->setInternalId($this->internalID);
                 $this->response->setSuccess("false");
-                $this->response->setAppCode("103");
-                $this->response->setMessage("THERE_IS_NO_FACE_IN_THE_IMAGE");
+                $this->response->setErrorCode("2");
+                $this->response->setErrorMessage("No face could be detected in the image.");
             }
         } else {
 
             $this->response->setSuccess("false");
-            $this->response->setAppCode($result["error_code"]);
-            $this->response->setMessage($result["error"]);
+            $this->response->setErrorCode($result["error_code"]);
+            $this->response->setErrorMessage($result["error"]);
         }
         return false;
     }
@@ -150,10 +151,10 @@ class ImageController extends FaceppController
             return true;
         }else{
             $result = json_decode($result["body"],true);
-            $this->response->setInternalID($this->internalID);
+            $this->response->setPictureId($this->internalID);
             $this->response->setSuccess("false");
-            $this->response->setAppCode($result["error_code"]);
-            $this->response->setMessage($result["error"]);
+            $this->response->setErrorCode($result["error_code"]);
+            $this->response->setErrorMessage($result["error"]);
         }
         return false;
     }
@@ -169,18 +170,15 @@ class ImageController extends FaceppController
         $result = $this->execute("/train/verify",$params);
 
         if ($result['http_code'] == 200) {
-
             $this->response->setSuccess("true");
-            $this->response->setAppCode("200");
-            $this->response->setMessage("OK");
 
             return true;
         } else{
             $result = json_decode($result["body"],true);
-            $this->response->setInternalID($this->internalID);
+            $this->response->setPictureId($this->internalID);
             $this->response->setSuccess("false");
-            $this->response->setAppCode($result["error_code"]);
-            $this->response->setMessage($result["error"]);
+            $this->response->setErrorCode($result["error_code"]);
+            $this->response->setErrorMessage($result["error"]);
         }
         return false;
     }
@@ -202,22 +200,20 @@ class ImageController extends FaceppController
             $this->response->setSuccess($result["is_same_person"]);
 
             if($result["is_same_person"]) {
-                $this->response->setAppCode("200");
-                $this->response->setMessage("OK");
                 return true;
             } else{
 
-                $this->response->setAppCode("104");
-                $this->response->setMessage("IT_IS_NOT_THE_SAME_PERSON");
+                $this->response->setErrorCode("14");
+                $this->response->setErrorMessage("It is not the same person");
                 return false;
             }
 
         } else{
             $result = json_decode($result["body"],true);
-            $this->response->setInternalId("");
+            $this->response->setPictureId("");
             $this->response->setSuccess("false");
-            $this->response->setAppCode($result["error_code"]);
-            $this->response->setMessage($result["error"]);
+            $this->response->setErrorCode($result["error_code"]);
+            $this->response->setErrorMessage($result["error"]);
         }
         return false;
     }
