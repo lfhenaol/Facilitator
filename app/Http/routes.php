@@ -15,4 +15,4 @@
 ##    return view('welcome');
 ##});
 
-Route::match(['get','post'],'/{train}','Facilitator@Facilitator');
+Route::match(['get','post'],'/{service}','Facilitator@Facilitator');

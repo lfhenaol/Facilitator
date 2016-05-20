@@ -60,20 +60,22 @@ class ServiceInterface extends Controller
      */
     public function request(Request $request, $requestType)
     {
-        if(strtolower($requestType) == "train")
+        if(strtolower($requestType) == "register")
         {
             $request = $request->json()->all();
            
             $this->addTraining(new TrainingController(uniqid() /*unique identifier for userId*/, $request["pictures"], new TrainingResponseController()));
 
         }
-        else if (strtolower($requestType) == "verify")
+        else if (strtolower($requestType) == "login")
         {
             $request = $request->json()->all();
             $facId = trim($request["facilitatorIds"][0]["facId"]);
             $picture = trim($request["picture"]);
 
             $this->addVerification(new VerificationController($facId,$picture, new VerificationResponseController()));
+        } else{
+            abort("404");
         }
 
         return true;
@@ -89,7 +91,7 @@ class ServiceInterface extends Controller
     public function response($respondType)
     {
         // Development of JSON to respond to the result of training or verification
-        if(strtolower($respondType) == "train")
+        if(strtolower($respondType) == "register")
         {
             $picturesResult = array();
             $success = true;
@@ -115,7 +117,7 @@ class ServiceInterface extends Controller
 
             return response()->json($json);
         }
-        else if (strtolower($respondType) == "verify") {
+        else if (strtolower($respondType) == "login") {
 
             $success = $this->getVerification()->getVerificationResponse()->getSuccess();
             $pictureResult = array();

@@ -33,7 +33,11 @@ class Facilitator extends Controller
             $this->serviceInterface->request($request, $requestType);
             return $this->serviceInterface->response($requestType);
         } else{
-            return response()->json(["method_http"=>"GET"]);
+            if (strtolower($requestType) == "login" or strtolower($requestType) == "register") {
+                return response()->json(["method_http" => "GET"]);
+            } else {
+                abort("404");
+            }
         }
     }
 }
