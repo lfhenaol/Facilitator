@@ -22,8 +22,13 @@ class ImagesFunction {
      */
     public function base64ToJpeg($base64_string, $output_file) {
         $ifp = fopen($output_file, "wb");
-        $data = explode(',', $base64_string);
-        fwrite($ifp, base64_decode($data[1]));
+        $seek = strpos($base64_string,",");
+        if($seek !== false) {
+            $data = explode(',', $base64_string);
+            fwrite($ifp, base64_decode($data[1]));
+        } else{
+            fwrite($ifp, base64_decode($base64_string));
+        }
         fclose($ifp);
         return $output_file;
     }
