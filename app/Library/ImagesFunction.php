@@ -30,7 +30,7 @@ class ImagesFunction {
             fwrite($ifp, base64_decode($base64_string));
         }
         fclose($ifp);
-        return $output_file;
+        return $output_fil;
     }
 
     /**
