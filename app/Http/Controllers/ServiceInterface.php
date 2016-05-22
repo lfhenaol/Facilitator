@@ -100,7 +100,7 @@ class ServiceInterface extends Controller
 
             foreach ($this->getTraining()->getImageSet() as $value => $item){
                 
-                if($item->getResponse()->getSuccess() == "false"){
+                if($item->getResponse()->getSuccess() == false){
                     array_push($picturesResult,["pictureId"=>$item->getResponse()->getPictureId(),
                     "errorCode"=>$item->getResponse()->getErrorCode(),
                     "errorMessage"=>$item->getResponse()->getErrorMessage()]);
@@ -123,7 +123,7 @@ class ServiceInterface extends Controller
             $pictureResult = array();
             $json = ["success"=>$success];
 
-            if($success == "false" || $success == false){
+            if($success == false){
                 array_push($pictureResult,["errorCode"=>$this->getVerification()->getVerificationResponse()->getErrorCode(),
                 "errorMessage"=>$this->getVerification()->getVerificationResponse()->getErrorMessage()]);
                 $json = ["success"=>$success, "errors"=>$pictureResult];

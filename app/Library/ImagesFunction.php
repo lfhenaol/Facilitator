@@ -58,4 +58,5 @@ class ImagesFunction {
 
         return $date . ".jpeg";
     }
+    
 }

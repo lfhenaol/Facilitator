@@ -74,7 +74,7 @@ class ImageController extends FaceppController
             $this->response->setPictureId("");
             $this->response->setSuccess(false);
             $this->response->setErrorCode($result["error_code"]);
-            $this->response->setErrorMessage($result["error"]);
+            $this->response->setErrorMessage($this->normalizeError($result["error"]));
         }
 
         return false;
@@ -131,7 +131,7 @@ class ImageController extends FaceppController
 
             $this->response->setSuccess(false);
             $this->response->setErrorCode($result["error_code"]);
-            $this->response->setErrorMessage($result["error"]);
+            $this->response->setErrorMessage($this->normalizeError($result["error"]));
         }
         return false;
     }
@@ -154,7 +154,7 @@ class ImageController extends FaceppController
             $this->response->setPictureId($this->internalID);
             $this->response->setSuccess(false);
             $this->response->setErrorCode($result["error_code"]);
-            $this->response->setErrorMessage($result["error"]);
+            $this->response->setErrorMessage($this->normalizeError($result["error"]));
         }
         return false;
     }
@@ -178,7 +178,7 @@ class ImageController extends FaceppController
             $this->response->setPictureId($this->internalID);
             $this->response->setSuccess(false);
             $this->response->setErrorCode($result["error_code"]);
-            $this->response->setErrorMessage($result["error"]);
+            $this->response->setErrorMessage($this->normalizeError($result["error"]));
         }
         return false;
     }
@@ -213,9 +213,18 @@ class ImageController extends FaceppController
             $this->response->setPictureId("");
             $this->response->setSuccess(false);
             $this->response->setErrorCode($result["error_code"]);
-            $this->response->setErrorMessage($result["error"]);
+            $this->response->setErrorMessage($this->normalizeError($result["error"]));
         }
         return false;
+    }
+
+    public function normalizeError($str){
+        $strings = explode("_",strtolower($str));
+        $string = ucfirst((string) $strings[0]);
+        for($i=1;$i<count($strings);$i++){
+            $string = $string." ".$strings[$i];
+        }
+        return $string;
     }
 
     /**
