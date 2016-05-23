@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 /**
+ * Stores the answers given by the authentication
  * Class VerificationResponseController
  * @package App\Http\Controllers\response
  */
@@ -15,17 +16,17 @@ class VerificationResponseController extends Controller
 {
 
     /**
-     * @var
+     * @var boolean It must contain the success or failure of authentication
      */
     private $success;
 
     /**
-     * @var
+     * @var int Should contain a error code
      */
     private $errorCode;
 
     /**
-     * @var
+     * @var string Should contain a error message
      */
     private $errorMessage;
 
@@ -38,7 +39,7 @@ class VerificationResponseController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return boolean
      */
     public function getSuccess()
     {
@@ -46,7 +47,7 @@ class VerificationResponseController extends Controller
     }
 
     /**
-     * @param mixed $success
+     * @param boolean $success
      */
     public function setSuccess($success)
     {
@@ -54,7 +55,7 @@ class VerificationResponseController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getErrorCode()
     {
@@ -62,7 +63,7 @@ class VerificationResponseController extends Controller
     }
 
     /**
-     * @param mixed $errorCode
+     * @param int $errorCode
      */
     public function setErrorCode($errorCode)
     {
@@ -70,7 +71,7 @@ class VerificationResponseController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getErrorMessage()
     {
@@ -78,7 +79,7 @@ class VerificationResponseController extends Controller
     }
 
     /**
-     * @param mixed $errorMessage
+     * @param string $errorMessage
      */
     public function setErrorMessage($errorMessage)
     {

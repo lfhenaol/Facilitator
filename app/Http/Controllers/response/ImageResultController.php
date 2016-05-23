@@ -8,29 +8,26 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 /**
+ * Stores the answers given by the register then of to fail
  * Class ImageResultController
  * @package App\Http\Controllers\response
  */
 class ImageResultController extends Controller
 {
     /**
-     * @var
-     * @change private $internalId; for private $pictureId;
+     * @var int Should contain the image identification
      */
     private $pictureId;
     /**
-     * @var
-     *
+     * @var boolean Should contain the success or failure of register an image
      */
     private $success;
     /**
-     * @var
-     * @change private $appCode; for private $errorCode
+     * @var int Should contain a error code
      */
     private $errorCode;
     /**
-     * @var
-     * @change private $message; for private $errorMessage;
+     * @var string Should contain a error message
      */
     private $errorMessage;
 
@@ -50,7 +47,7 @@ class ImageResultController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getPictureId()
     {
@@ -58,7 +55,7 @@ class ImageResultController extends Controller
     }
 
     /**
-     * @param mixed $pictureId
+     * @param int $pictureId
      */
     public function setPictureId($pictureId)
     {
@@ -66,7 +63,7 @@ class ImageResultController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getErrorCode()
     {
@@ -74,7 +71,7 @@ class ImageResultController extends Controller
     }
 
     /**
-     * @param mixed $errorCode
+     * @param int $errorCode
      */
     public function setErrorCode($errorCode)
     {
@@ -82,7 +79,7 @@ class ImageResultController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getErrorMessage()
     {
@@ -90,7 +87,7 @@ class ImageResultController extends Controller
     }
 
     /**
-     * @param mixed $errorMessage
+     * @param string $errorMessage
      */
     public function setErrorMessage($errorMessage)
     {
@@ -98,7 +95,7 @@ class ImageResultController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return boolean
      */
     public function getSuccess()
     {
@@ -106,7 +103,7 @@ class ImageResultController extends Controller
     }
     
     /**
-     * @param mixed $success
+     * @param boolean $success
      */
     public function setSuccess($success)
     {

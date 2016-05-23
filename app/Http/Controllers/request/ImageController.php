@@ -15,42 +15,42 @@ use App\Http\Controllers\faceppSDK\FaceppController;
 use Illuminate\Support\Facades\URL;
 
 /**
+ * Functions required to register or authenticate a user
  * Class ImageController
  * @package App\Http\Controllers\request
  */
 class ImageController extends FaceppController
 {
     /**
-     * @var
+     * @var int Should contain the image identification
      */
-    private $internalID;
+    private $pictureId;
     /**
-     * @var
+     * @var string Should contain the base64 image string
      */
     private $face;
     /**
-     * @var
+     * @var string Should contain an id that provides Faceplusplus after identifying a face
      */
     private $face_id;
     /**
-     * @var
+     * @var string Should contain a unique identifier for a user
      */
     private $userId;
-
     /**
-     * @var ImageResultController
+     * @var ImageResultController Should contain the answers given by the register then of to fail
      */
     private $response;
 
     /**
      * ImageController constructor.
-     * @param $userID
-     * @param $image
+     * @param string $userID
+     * @param string $image
      * @param ImageResultController $response
      */
     public function __construct($userID, $image, ImageResultController $response)
     {
-        $this->userId = $userID; // It generates a unique identifier representing the user
+        $this->userId = $userID;
         $this->face = $image;
         $this->response = $response;
     }
@@ -61,15 +61,14 @@ class ImageController extends FaceppController
      * @return bool
      */
     public function create(){
-        $params['person_name'] = $this->userId;
+        $params['person_name'] = $this->userId; // User ID is set to Face++
 
-        $result = $this->execute('/person/create', $params);
+        $result = $this->execute('/person/create', $params); // Executes the function create person Face++
 
         // Verify that the procedure will be successful or that the person already exists
-        if ($result['http_code'] == 200 || $result['http_code'] == 453)
-        {
+        if ($result['http_code'] == 200 || $result['http_code'] == 453) { // Response Face++ OK
             return true;
-        }else{
+        }else{ // Response Face++ error
             $result = json_decode($result["body"],true);
             $this->response->setPictureId("");
             $this->response->setSuccess(false);
@@ -94,41 +93,36 @@ class ImageController extends FaceppController
      */
 
     public function detect(){
-
+        // Create base64 image within a hard disk directory
         $imageFunction = new ImagesFunction();
         $imageFunction->imageBase64 = $this->face;
-        $params['img'] = $imageFunction->createImage($this->internalID);
+        $params['img'] = $imageFunction->createImage($this->pictureId); //The address of the hard disk is delivered
 
-        $results = $this->execute('/detection/detect', $params);
+        $results = $this->execute('/detection/detect', $params); // Executes the function detect face Face++
 
         $result = json_decode($results["body"],true);
 
-        $this->response->setPictureId($this->internalID);
+        $this->response->setPictureId($this->pictureId);
 
-        if ($results['http_code'] == 200) {
-
+        if ($results['http_code'] == 200) { // Response Face++ OK
             //Is checked if more than one face in the picture, if there is a single face or no face.
-            if (count($result['face']) > 2)
+            if (count($result['face']) > 2) // Case 1: More than a face in the image
             {
-
-                $this->response->setSuccess(false);
+                $this->response->setSuccess(false); // Process register error
                 $this->response->setErrorCode("13");
                 $this->response->setErrorMessage("More than a face in the image");
-
                 return false;
             }
-            else if(count($result['face']) == 1)
+            else if(count($result['face']) == 1) // Case 2: A face in the image
             {
-                $this->face_id = $result["face"][0]["face_id"];
-
+                $this->face_id = $result["face"][0]["face_id"]; // Continue process register
                 return true;
-            } else{
-                $this->response->setSuccess(false);
+            } else{ // Case 3: No face could be detected in the image
+                $this->response->setSuccess(false); //Process register error
                 $this->response->setErrorCode("2");
                 $this->response->setErrorMessage("No face could be detected in the image.");
             }
-        } else {
-
+        } else { // Response Face++ error
             $this->response->setSuccess(false);
             $this->response->setErrorCode($result["error_code"]);
             $this->response->setErrorMessage($this->normalizeError($result["error"]));
@@ -137,21 +131,21 @@ class ImageController extends FaceppController
     }
 
     /**
-     * Add detected faces faces repository created
+     * Add detected faces to repository created
      *
      * @return bool
      */
     public function add(){
-        $params["face_id"] = $this->face_id;
-        $params["person_name"] = $this->userId;
+        $params["face_id"] = $this->face_id; // Face ID is set to Face++
+        $params["person_name"] = $this->userId; // User ID is set to Face++
 
-        $result = $this->execute("/person/add_face", $params);
+        $result = $this->execute("/person/add_face", $params); // Executes the function add face person Face++
 
-        if ($result['http_code'] == 200) {
+        if ($result['http_code'] == 200) { // Response Face++ OK
             return true;
-        }else{
+        }else{ // Response Face++ error
             $result = json_decode($result["body"],true);
-            $this->response->setPictureId($this->internalID);
+            $this->response->setPictureId($this->pictureId);
             $this->response->setSuccess(false);
             $this->response->setErrorCode($result["error_code"]);
             $this->response->setErrorMessage($this->normalizeError($result["error"]));
@@ -165,17 +159,16 @@ class ImageController extends FaceppController
      * @return bool
      */
     public function train(){
-        $params["person_name"] = $this->userId;
+        $params["person_name"] = $this->userId; // User ID is set to Face++
 
-        $result = $this->execute("/train/verify",$params);
+        $result = $this->execute("/train/verify",$params); // Executes the function train Face++
 
-        if ($result['http_code'] == 200) {
-            $this->response->setSuccess(true);
-
+        if ($result['http_code'] == 200) { // Response Face++ OK
+            $this->response->setSuccess(true); // Process register OK
             return true;
-        } else{
+        } else{// Response Face++ error
             $result = json_decode($result["body"],true);
-            $this->response->setPictureId($this->internalID);
+            $this->response->setPictureId($this->pictureId);
             $this->response->setSuccess(false);
             $this->response->setErrorCode($result["error_code"]);
             $this->response->setErrorMessage($this->normalizeError($result["error"]));
@@ -189,20 +182,19 @@ class ImageController extends FaceppController
      * @return bool
      */
     public function verify(){
-        $params["person_name"] = $this->userId;
-        $params["face_id"] = $this->face_id;
+        $params["person_name"] = $this->userId; // User ID is set to Face++
+        $params["face_id"] = $this->face_id; // Face ID is set to Face++
 
-        $result = $this->execute("/recognition/verify",$params);
+        $result = $this->execute("/recognition/verify",$params); // Executes the function recognition verify Face++
 
-        if ($result['http_code'] == 200) {
+        if ($result['http_code'] == 200) { // Response Face++ OK
             $result = json_decode($result["body"],true);
 
-            $this->response->setSuccess($result["is_same_person"]);
+            $this->response->setSuccess($result["is_same_person"]); // Verification successful or failed
 
-            if($result["is_same_person"]) {
+            if($result["is_same_person"]) { // Verification successful
                 return true;
-            } else{
-
+            } else{ // Verification failed
                 $this->response->setErrorCode("14");
                 $this->response->setErrorMessage("It is not the same person");
                 return false;
@@ -218,6 +210,12 @@ class ImageController extends FaceppController
         return false;
     }
 
+    /**
+     * Normalizes the error message given by Face++
+     *
+     * @param  string $str
+     * @return string
+     */
     public function normalizeError($str){
         $strings = explode("_",strtolower($str));
         $string = ucfirst((string) $strings[0]);
@@ -228,7 +226,7 @@ class ImageController extends FaceppController
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getUserId()
     {
@@ -236,7 +234,7 @@ class ImageController extends FaceppController
     }
 
     /**
-     * @param mixed $userId
+     * @param string $userId
      */
     public function setUserId($userId)
     {
@@ -244,7 +242,7 @@ class ImageController extends FaceppController
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getFace()
     {
@@ -252,7 +250,7 @@ class ImageController extends FaceppController
     }
 
     /**
-     * @param mixed $face
+     * @param string $face
      */
     public function setFace($face)
     {
@@ -260,18 +258,18 @@ class ImageController extends FaceppController
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getInternalID()
+    public function getPictureId()
     {
-        return $this->internalID;
+        return $this->pictureId;
     }
 
     /**
-     * @param mixed $internalID
+     * @param int $pictureId
      */
-    public function setInternalID($internalID)
+    public function setPictureId($pictureId)
     {
-        $this->internalID = $internalID;
+        $this->pictureId = $pictureId;
     }
 }

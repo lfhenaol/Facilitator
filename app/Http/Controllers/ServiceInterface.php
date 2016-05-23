@@ -18,14 +18,12 @@ use App\Http\Requests;
 class ServiceInterface extends Controller
 {
     /**
-     * @var array
-     * Trainings
+     * @var TrainingController
      */
     private $training;
 
     /**
-     * @var array
-     * Verifications
+     * @var VerificationController
      */
     private $verification;
 
@@ -52,7 +50,7 @@ class ServiceInterface extends Controller
     }
 
     /**
-     * Request for either training or verification
+     * Request for either register or login
      *
      * @param Request $request
      * @param $requestType
@@ -60,16 +58,17 @@ class ServiceInterface extends Controller
      */
     public function request(Request $request, $requestType)
     {
-        if(strtolower($requestType) == "register")
+
+        if(strtolower($requestType) == "register") // Interface register
         {
-            $request = $request->json()->all();
+            $request = $request->json()->all(); //Data capture from the document json
            
             $this->addTraining(new TrainingController(uniqid() /*unique identifier for userId*/, $request["pictures"], new TrainingResponseController()));
 
         }
-        else if (strtolower($requestType) == "login")
+        else if (strtolower($requestType) == "login") //Interface login
         {
-            $request = $request->json()->all();
+            $request = $request->json()->all(); //Data capture from the document json
             $facId = trim($request["facilitatorIds"][0]["facId"]);
             $picture = trim($request["picture"]);
 
@@ -91,7 +90,7 @@ class ServiceInterface extends Controller
     public function response($respondType)
     {
         // Development of JSON to respond to the result of training or verification
-        if(strtolower($respondType) == "register")
+        if(strtolower($respondType) == "register") //Interface register
         {
             $picturesResult = array();
             $success = true;
@@ -100,7 +99,7 @@ class ServiceInterface extends Controller
 
             foreach ($this->getTraining()->getImageSet() as $value => $item){
                 
-                if($item->getResponse()->getSuccess() == false){
+                if($item->getResponse()->getSuccess() == false){ //Bad format
                     array_push($picturesResult,["pictureId"=>$item->getResponse()->getPictureId(),
                     "errorCode"=>$item->getResponse()->getErrorCode(),
                     "errorMessage"=>$item->getResponse()->getErrorMessage()]);
@@ -108,22 +107,22 @@ class ServiceInterface extends Controller
                 }
             }
 
-            if($success == true){
+            if($success == true){ //Good format
                 array_push($picturesResult,["facId" => $this->getTraining()->getTrainingResponse()->getFacilitatorId()->getFacId(),
                     "facType"=>$this->getTraining()->getTrainingResponse()->getFacilitatorId()->getFacType()]);
             }
-
+            // Json document creation
             $json =["success"=>$success, (($success)? "facilitatorIds":"errors") => $picturesResult];
 
             return response()->json($json);
         }
-        else if (strtolower($respondType) == "login") {
-
+        else if (strtolower($respondType) == "login") {  //Interface login
+            // Json document creation
             $success = $this->getVerification()->getVerificationResponse()->getSuccess();
             $pictureResult = array();
             $json = ["success"=>$success];
 
-            if($success == false){
+            if($success == false){ //Bad format
                 array_push($pictureResult,["errorCode"=>$this->getVerification()->getVerificationResponse()->getErrorCode(),
                 "errorMessage"=>$this->getVerification()->getVerificationResponse()->getErrorMessage()]);
                 $json = ["success"=>$success, "errors"=>$pictureResult];
@@ -142,26 +141,10 @@ class ServiceInterface extends Controller
     }
 
     /**
-     * @param array $training
-     */
-    public function setTraining($training)
-    {
-        $this->training = $training;
-    }
-
-    /**
-     * @return  VerificationController
+     * @return VerificationController
      */
     public function getVerification()
     {
         return $this->verification;
-    }
-
-    /**
-     * @param array $verification
-     */
-    public function setVerification($verification)
-    {
-        $this->verification = $verification;
     }
 }

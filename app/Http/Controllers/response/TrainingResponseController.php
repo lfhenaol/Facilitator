@@ -8,22 +8,23 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 /**
+ * Stores the answers given by the register then of be success
  * Class TrainingResponseController
  * @package App\Http\Controllers\response
  */
 class TrainingResponseController extends Controller
 {
     /**
-     * @var
+     * @var string Should contain a unique identifier for a user
      */
     private $userId;
     /**
-     * @var
+     * @var boolean It must contain the success or failure of register an image
      */
     private $success;
 
     /**
-     * @var array
+     * @var FacilitatorIdController Should contain the answer given by the register then of be success
      */
     private $facilitatorId;
 
@@ -43,7 +44,7 @@ class TrainingResponseController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getUserId()
     {
@@ -51,7 +52,7 @@ class TrainingResponseController extends Controller
     }
 
     /**
-     * @param mixed $userId
+     * @param string $userId
      */
     public function setUserId($userId)
     {
@@ -59,7 +60,7 @@ class TrainingResponseController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return boolean
      */
     public function getSuccess()
     {
@@ -67,7 +68,7 @@ class TrainingResponseController extends Controller
     }
 
     /**
-     * @param mixed $success
+     * @param boolean $success
      */
     public function setSuccess($success)
     {
@@ -76,20 +77,10 @@ class TrainingResponseController extends Controller
 
 
     /**
-     * @return array
+     * @return FacilitatorIdController
      */
     public function getFacilitatorId()
     {
         return $this->facilitatorId;
     }
-
-    /**
-     * @param array $facilitatorId
-     */
-    public function setFacilitatorId($facilitatorId)
-    {
-        $this->facilitatorId = $facilitatorId;
-    }
-
-
 }

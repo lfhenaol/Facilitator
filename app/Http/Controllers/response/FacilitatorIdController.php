@@ -8,17 +8,18 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 /**
+ * Stores the answers given by the register then of be success
  * Class FacilitatorIdController
  * @package App\Http\Controllers\response
  */
 class FacilitatorIdController extends Controller
 {
     /**
-     * @var
+     * @var string Unique identifier for an user
      */
     private $facId;
     /**
-     * @var
+     * @var string The facial recognition service name, identifies the service
      */
     private $facType;
 
@@ -35,7 +36,7 @@ class FacilitatorIdController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getFacId()
     {
@@ -43,7 +44,7 @@ class FacilitatorIdController extends Controller
     }
 
     /**
-     * @param mixed $facId
+     * @param string $facId
      */
     public function setFacId($facId)
     {
@@ -51,7 +52,7 @@ class FacilitatorIdController extends Controller
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getFacType()
     {
@@ -59,7 +60,7 @@ class FacilitatorIdController extends Controller
     }
 
     /**
-     * @param mixed $facType
+     * @param string $facType
      */
     public function setFacType($facType)
     {

@@ -8,17 +8,22 @@
 namespace App\Library;
 
 use Illuminate\Support\Facades\URL;
-
+/**
+ * Functions necessary to convert an image into base64 in a physical memory image
+ *
+ * Class ImagesFunction
+ * @package App\Library
+ */
 class ImagesFunction {
     /**
-     * @var
+     * @var string base64 image string
      */
     public $imageBase64;
 
     /**
-     * @param $base64_string
-     * @param $output_file
-     * @return mixed
+     * @param string $base64_string
+     * @param string $output_file
+     * @return string
      */
     public function base64ToJpeg($base64_string, $output_file) {
         $ifp = fopen($output_file, "wb");
@@ -34,15 +39,15 @@ class ImagesFunction {
     }
 
     /**
-     * @param $image
+     * @param string $image
      */
     public function deleteImage($image) {
         unlink($image);
     }
 
     /**
-     * @param $imageId
-     * @return mixed
+     * @param int $imageId
+     * @return string
      */
     public function createImage($imageId) {
         $file = $this->createName($imageId);
